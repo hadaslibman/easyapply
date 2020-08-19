@@ -23,7 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class FirstScript {
 	public static void main(String[] args) throws InterruptedException {
-	    //system Property for chrome Driver   
+	    //system property for chrome driver   
 	    System.setProperty("webdriver.chrome.driver", "C:\\Selenium\\chromedriver_win32\\chromedriver.exe");  
 	       
         //instantiate a ChromeDriver class.
@@ -66,10 +66,8 @@ public class FirstScript {
 
         //locate the job title box and enter title of job and search
         WebElement jobTitle = driver.findElement(By.className("jobs-search-box__text-input"));
-        //jobTitle.sendKeys("Americas End User Support & Productivity Analyst Intern");
-        //jobTitle.sendKeys("bd supply chain internship");
-        //jobTitle.sendKeys("management rotation program intern - summer 2021");
-        jobTitle.sendKeys("Accountant");
+        //jobTitle.sendKeys("Data Analyst Extreme sony");
+        jobTitle.sendKeys("product manager");
         Thread.sleep(2000);
 
         //locate and click the search button
@@ -91,15 +89,14 @@ public class FirstScript {
 		searchResults.findElements(By.className("occludable-update"))
 		    .parallelStream()
 		    .filter(e -> match(e.getText())) //filters by predefined set of words defined by the user in the match method 
-		    .limit(5) // number of tabs to open - TODO - extract to a variable
+		    .limit(10) // number of tabs to open - TODO - extract to a variable
 		    .forEach(we -> {
 		        WebElement element = we.findElement(By.className("disabled"));
 		        String link = element.getAttribute("href");
 		        ((JavascriptExecutor) driver).executeScript("window.open('"+ link + "')");
 		    });
 
-   
-        //saves the tabs as a list and goes over each tab
+        //save the tabs as a list and go over each tab
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
         tabs.stream().skip(1).forEach(tab -> {
             driver.switchTo().window(tab);
@@ -108,7 +105,7 @@ public class FirstScript {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
-            //saves the apply buttons as a list and goes over to check for cases 
+            //save the apply buttons as a list and go over to check for cases 
             List<WebElement> applyButton = driver.findElements(By.className("jobs-s-apply"));
             if (applyButton.isEmpty()) { //in cases where position is still posted but cant longer apply
                 ((JavascriptExecutor) driver).executeScript("window.close()");
@@ -127,7 +124,7 @@ public class FirstScript {
         });
         
         /**
-         * save the tabs left open as a list
+         * save the tabs left open as a list (no longer linkedin page)
          * for each tab, look for a 'apply'
          */
         List<String> apps = new ArrayList<>(driver.getWindowHandles());
@@ -151,6 +148,7 @@ public class FirstScript {
     }
 
     //method to be called after application case has been determined
+	//checks for easyapply earlier
     private static void postApply(WebDriver driver, String workdayPassword) throws InterruptedException {
         if(driver.getCurrentUrl().contains("myworkdayjobs.com")) {
             workDay(driver, workdayPassword);
@@ -274,8 +272,8 @@ public class FirstScript {
         Thread.sleep(2000);
         driver.findElements(By.cssSelector("input[class*=gwt-TextBox]")).get(4).sendKeys("082020");
         // role description
-//        driver.findElements(By.cssSelector("textarea[data-automation-id*=textAreaField]")).get(5).clear();
-//        Thread.sleep(2000);
+//        driver.findElements(By.cssSelector("textarea[data-automation-id*=textAreaField]")).get(0).clear();
+//        Thread.sleep(5000);
 //        driver.findElements(By.cssSelector("textarea[data-automation-id*=textAreaField]")).get(0).sendKeys("•  Collaborated with QA engineers to develop and create effective strategies and test cases \r\n" + 
 //        		"•	Tested new and existing features on different platforms and analyzed results\r\n" + 
 //        		"•	Worked with cross-functional teams to ensure quality throughout the software\r\n" 
@@ -433,7 +431,7 @@ public class FirstScript {
         wait.until(ExpectedConditions.stalenessOf(input));
     }
     
-    //method to use on easy apply aplication
+    //method to use on easy apply application
     private static void easyApply(WebDriver driver) throws InterruptedException {
         Thread.sleep(3000);
         System.out.println();
@@ -448,11 +446,13 @@ public class FirstScript {
             } else if (isHeaderLike(driver, "contact info")) {
                 fillEasyApplyField(driver, "first name", "Hadas");
                 fillEasyApplyField(driver, "last name", "Libman");
-                fillEasyApplyField(driver, "phone", "123456789");
+                fillEasyApplyField(driver, "phone", "9413570012");
             } else if (isHeaderLike(driver, "resume")) {
             } else if (isHeaderLike(driver, "Home address")) {
-                fillEasyApplyField(driver, "state", "NY");
-                easyApplyAutoCompletionTextBox(driver, "city", "Waco, Texas");
+            	fillEasyApplyField(driver, "street address line 1", "123 Magnolia Dr");
+            	fillEasyApplyField(driver, "zip / postal code", "12345");
+                fillEasyApplyField(driver, "state", "Texas");
+                easyApplyAutoCompletionTextBox(driver, "city", "Beaumont, Texas");
             } else {
                 manuallyContinue(driver);
                 break;
@@ -468,6 +468,7 @@ public class FirstScript {
                     review.get().click();
                 } else {
                     Optional<WebElement> submitApplication = easyApplyClickButton(driver, "submit application");
+                    //uncomment line below only when want to apply
                     // submitApplication.get().click();
                     isFinished = true;
                     String company = driver.findElement(By.cssSelector("h2[id*=jobs-apply-header]")).getText().replace("Apply to ", "");
@@ -572,8 +573,8 @@ public class FirstScript {
      * only positions that contain 'product management intern' or 'product manager intern' will open
      */
     private static Boolean match(String title) {
-	       // return title.toLowerCase().contains("product management intern") || title.toLowerCase().contains("product manager intern");
-        return true;
+	        return title.toLowerCase().contains("product manager"); //|| title.toLowerCase().contains("product manager");
+        //return true;
     }
 
 }
